@@ -29,12 +29,15 @@ bajoPeso calAQuemar gimnasta = gimnasta{peso=(peso gimnasta) - calAQuemar}
 ----------------------------------- Punto 3 -----------------------------------
 type Ejercitar = Float->Gimnasta->Gimnasta
 
+calculoCalorias :: Float->Float->Float->Float
+calculoCalorias velocidad minutos = (*minutos).(*velocidad)--uso composicion parcial
+
 caminataEnCinta :: Ejercitar
-caminataEnCinta minutos = quemarCalorias (1*5*minutos)
+caminataEnCinta minutos = quemarCalorias (calculoCalorias 5 minutos 1)
 --quema 1 cal a una vel constante de 5 cada x minutos
 
 entrenamientoEnCinta :: Ejercitar
-entrenamientoEnCinta minutos = quemarCalorias (1*((velMax minutos)/2)*minutos)
+entrenamientoEnCinta minutos = quemarCalorias (calculoCalorias (velMax minutos) minutos 1)
 
 velMax :: Float->Float
 velMax minutos = 6+(6 + (minutos/5)) --arranca en 6 y le sumo la vel maxima idk copie la formula del ejemplo
@@ -50,6 +53,6 @@ colina :: Float->Ejercitar
 colina inclinacion minutos = quemarCalorias (2*minutos*inclinacion)
 
 montania :: Float->Ejercitar --Le pongo 10 para cuando llegue a tonifica,aumente la tonificacion en
-montania inclinacionInicial minutos = (tonifica 10).(colina (inclinacionInicial+3) (minutos/2)).(colina inclinacionInicial (minutos/2))
+montania inclinacionInicial minutos = (tonifica 10).(colina (inclinacionInicial + 3) (minutos/2)).(colina inclinacionInicial (minutos/2))
 
 
