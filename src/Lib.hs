@@ -30,7 +30,8 @@ bajoPeso calAQuemar gimnasta = gimnasta{peso=(peso gimnasta) - calAQuemar}
 type Ejercitar = Float->Gimnasta->Gimnasta
 
 calculoCalorias :: Float->Float->Float->Float
-calculoCalorias velocidad minutos = (*minutos).(*velocidad)--uso composicion parcial
+calculoCalorias velOInc minutos = (*minutos).(*velOInc)--uso composicion parcial
+-- donde velOInc es la velocidad o la inclinacion
 
 caminataEnCinta :: Ejercitar
 caminataEnCinta minutos = quemarCalorias (calculoCalorias 5 minutos 1)
@@ -50,7 +51,7 @@ tonifica :: Float->Gimnasta->Gimnasta
 tonifica peso gimnasta = gimnasta{coefTonificacion = (coefTonificacion gimnasta) + (peso * 0.1)}
 
 colina :: Float->Ejercitar
-colina inclinacion minutos = quemarCalorias (2*minutos*inclinacion)
+colina inclinacion minutos = quemarCalorias (calculoCalorias inclinacion minutos 2)
 
 montania :: Float->Ejercitar --Le pongo 10 para cuando llegue a tonifica,aumente la tonificacion en
 montania inclinacionInicial minutos = (tonifica 10).(colina (inclinacionInicial + 3) (minutos/2)).(colina inclinacionInicial (minutos/2))
