@@ -11,7 +11,6 @@ data Gimnasta = UnGimnasta{
 
 pancho = UnGimnasta "Francisco" 40 120 1
 andres = UnGimnasta "Andy" 22 80 6
-
 ----------------------------------- Punto 1 -----------------------------------
 estaSaludable :: Gimnasta->Bool
 estaSaludable gimnasta = (noEsObeso.peso) gimnasta && ((>5).coefTonificacion) gimnasta
@@ -55,5 +54,40 @@ colina inclinacion minutos = quemarCalorias (calculoCalorias inclinacion minutos
 
 montania :: Float->Ejercitar --Le pongo 10 para cuando llegue a tonifica,aumente la tonificacion en
 montania inclinacionInicial minutos = (tonifica 10).(colina (inclinacionInicial + 3) (minutos/2)).(colina inclinacionInicial (minutos/2))
+----------------------------------- Punto 4 -----------------------------------
+data Rutina = UnaRutina{
+    nombre :: String,
+    duracionTotal :: Int,
+    ejercicios :: [Ejercitar]
+}deriving (Show)
+
+rutinaTincho = UnaRutina "rutina tincho" 60 [caminataEnCinta,entrenamientoEnCinta,pesas 20,colina 4 ,montania 4]
 
 
+{-
+haceRutina :: Gimnasta->Rutina->Gimnasta
+haceRutina gym rutina = aplicoEjercicios (ejercicios rutina) ( (duracionTotal rutina)/(length (ejercicios rutina)) ) gym
+
+aplicoEjercicios :: [Ejercitar]->Float->Gimnasta->Gimnasta
+aplicoEjercicios (x:xs) minutos gimnasta =  aplicoEjercicios xs minutos (x minutos gimnasta)
+
+-}
+
+haceRutina :: Gimnasta->Rutina->Gimnasta
+haceRutina gimnasta rutina = foldr ($) gimnasta  ((duracionTotal `div` length (ejercicios rutina)) (ejercicios rutina) )
+
+rutinaConTiempos :: Int->[Ejercitar]->[Ejercitar]
+rutinaConTiempos duracionTotal ejercicios = map ( duracionTotal `div` (length ejercicios) ) ejercicios 
+
+resumenRutina :: Rutina->Gimnasta->(String,Float,Float)
+resumenRutina rutina gym = (nombre rutina,totalPesoPerdido gym rutina,calculoIncrementoTonif gym (haceRutina gym rutina ))
+
+calculoIncrementoTonif :: Gimnasta->Gimnasta->Float
+calculoIncrementoTonif g1 gf = (coefTonificacion gf) -(coefTonificacion g1)--accedo a= la tonif final y le resto el inicial
+
+totalPesoPerdido :: Gimnasta->Rutina->Float
+totalPesoPerdido gym rutina = (peso (haceRutina gym rutina)) - (peso gym)--accedo al peso final y le resto el inicial
+
+----------------------------------- Punto 5 -----------------------------------
+cualesDejanSaludable :: [Rutina]->Gimnasta->[Rutina]
+cualesDejanSaludable listaRutina gimnasta = filter (estaSaludable .(haceRutina gimnasta)) listaRutina
