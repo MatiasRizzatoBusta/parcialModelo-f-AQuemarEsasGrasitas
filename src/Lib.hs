@@ -76,14 +76,10 @@ haceRutina :: Gimnasta->Rutina->Gimnasta
 haceRutina gimnasta rutina = foldr ($) gimnasta  (ejercicios rutina)
 
 resumenRutina :: Rutina->Gimnasta->(String,Float,Float)
-resumenRutina rutina gym = (nombre rutina,totalPesoPerdido gym rutina,calculoIncrementoTonif gym (haceRutina gym rutina ))
+resumenRutina rutina gimnasta = (nombre rutina,calculoDiferencia peso gimnasta rutina,calculoDiferencia coefTonificacion gimnasta rutina)
 
-calculoIncrementoTonif :: Gimnasta->Gimnasta->Float
-calculoIncrementoTonif g1 gf = (coefTonificacion gf) -(coefTonificacion g1)--accedo a= la tonif final y le resto el inicial
-
-totalPesoPerdido :: Gimnasta->Rutina->Float
-totalPesoPerdido gym rutina = (peso (haceRutina gym rutina)) - (peso gym)--accedo al peso final y le resto el inicial
-
+calculoDiferencia :: (Gimnasta->Float)->Gimnasta->Rutina->Float--(Gimnasta->Float)porque es un atributo del gimnasta al q quiero acceder y no se lo pase
+calculoDiferencia atributo gimnasta rutina =  atributo (haceRutina gimnasta rutina) - (atributo gimnasta)
 ----------------------------------- Punto 5 -----------------------------------
 cualesDejanSaludable :: [Rutina]->Gimnasta->[Rutina]
 cualesDejanSaludable listaRutina gimnasta = filter (estaSaludable .(haceRutina gimnasta)) listaRutina
