@@ -26,33 +26,33 @@ quemarCalorias calAQuemar gimnasta |(not.estaSaludable) gimnasta = bajoPeso (cal
 bajoPeso :: Float->Gimnasta->Gimnasta
 bajoPeso calAQuemar gimnasta = gimnasta{peso=(peso gimnasta) - calAQuemar}
 ----------------------------------- Punto 3 -----------------------------------
-type Ejercitar = Float->Gimnasta->Gimnasta
+type Ejercitar = Gimnasta->Gimnasta
 
 calculoCalorias :: Float->Float->Float->Float
 calculoCalorias velOInc minutos = (*minutos).(*velOInc)--uso composicion parcial
 -- donde velOInc es la velocidad o la inclinacion
 
-caminataEnCinta :: Ejercitar
+caminataEnCinta :: Float->Ejercitar
 caminataEnCinta minutos = quemarCalorias (calculoCalorias 5 minutos 1)
 --quema 1 cal a una vel constante de 5 cada x minutos
 
-entrenamientoEnCinta :: Ejercitar
+entrenamientoEnCinta :: Float->Ejercitar
 entrenamientoEnCinta minutos = quemarCalorias (calculoCalorias (velMax minutos) minutos 1)
 
 velMax :: Float->Float
 velMax minutos = 6+(6 + (minutos/5)) --arranca en 6 y le sumo la vel maxima idk copie la formula del ejemplo
 
-pesas :: Float->Ejercitar
+pesas :: Float->Float->Ejercitar
 pesas peso minutos gimnasta |minutos > 10 = tonifica peso gimnasta
                             |otherwise = gimnasta
 
 tonifica :: Float->Gimnasta->Gimnasta
 tonifica peso gimnasta = gimnasta{coefTonificacion = (coefTonificacion gimnasta) + (peso * 0.1)}
 
-colina :: Float->Ejercitar
+colina :: Float->Float->Ejercitar
 colina inclinacion minutos = quemarCalorias (calculoCalorias inclinacion minutos 2)
 
-montania :: Float->Ejercitar --Le pongo 10 para cuando llegue a tonifica,aumente la tonificacion en
+montania :: Float->Float->Ejercitar --Le pongo 10 para cuando llegue a tonifica,aumente la tonificacion en
 montania inclinacionInicial minutos = (tonifica 10).(colina (inclinacionInicial + 3) (minutos/2)).(colina inclinacionInicial (minutos/2))
 ----------------------------------- Punto 4 -----------------------------------
 data Rutina = UnaRutina{
@@ -61,8 +61,7 @@ data Rutina = UnaRutina{
     ejercicios :: [Ejercitar]
 }deriving (Show)
 
-rutinaTincho = UnaRutina "rutina tincho" 60 [caminataEnCinta,entrenamientoEnCinta,pesas 20,colina 4 ,montania 4]
-
+rutinaTincho = UnaRutina "rutina tincho" 60 [caminataEnCinta 20,entrenamientoEnCinta 20,pesas 50 20,colina 4 20,montania 4 20]
 
 {-
 haceRutina :: Gimnasta->Rutina->Gimnasta
@@ -74,10 +73,7 @@ aplicoEjercicios (x:xs) minutos gimnasta =  aplicoEjercicios xs minutos (x minut
 -}
 
 haceRutina :: Gimnasta->Rutina->Gimnasta
-haceRutina gimnasta rutina = foldr ($) gimnasta  ((duracionTotal `div` length (ejercicios rutina)) (ejercicios rutina) )
-
-rutinaConTiempos :: Int->[Ejercitar]->[Ejercitar]
-rutinaConTiempos duracionTotal ejercicios = map ( duracionTotal `div` (length ejercicios) ) ejercicios 
+haceRutina gimnasta rutina = foldr ($) gimnasta  (ejercicios rutina)
 
 resumenRutina :: Rutina->Gimnasta->(String,Float,Float)
 resumenRutina rutina gym = (nombre rutina,totalPesoPerdido gym rutina,calculoIncrementoTonif gym (haceRutina gym rutina ))
